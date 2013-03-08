@@ -28,7 +28,7 @@ module Patron
   # Represents the response from the HTTP server.
   class Response
 
-    def initialize(url, status, redirect_count, header_data, body, default_charset = nil)
+    def initialize(url, status, redirect_count, header_data, body, default_charset = nil, primary_ip = nil)
       # Don't let a response clear out the default charset, which would cause encoding to fail
       default_charset = "ASCII-8BIT" unless default_charset
       @url            = url
@@ -37,6 +37,8 @@ module Patron
       @body           = body
 
       @charset        = determine_charset(header_data, body) || default_charset
+
+      @primary_ip     = primary_ip
 
       [url, header_data].each do |attr|
         convert_to_default_encoding!(attr)
@@ -48,7 +50,7 @@ module Patron
       end
     end
 
-    attr_reader :url, :status, :status_line, :redirect_count, :body, :headers, :charset
+    attr_reader :url, :status, :status_line, :redirect_count, :body, :headers, :charset, :primary_ip
 
     def inspect
       # Avoid spamming the console with the header and body data

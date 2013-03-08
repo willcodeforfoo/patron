@@ -43,6 +43,11 @@ describe Patron::Response do
     response.headers['Set-Cookie'].should == ["a=1","b=2"]
   end
 
+  it "should set primary IP" do
+    response = @session.get("/repetitiveheader")
+    response.primary_ip.should == "127.0.0.1"
+  end
+
   it "should works with non-text files" do
     response = @session.get("/picture")
     response.headers['Content-Type'].should == 'image/png'

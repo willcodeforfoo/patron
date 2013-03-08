@@ -494,8 +494,9 @@ static void set_options_from_request(VALUE self, VALUE request) {
 
 /* Use the info in a Curl handle to create a new Response object. */
 static VALUE create_response(VALUE self, CURL* curl, VALUE header_buffer, VALUE body_buffer) {
-  VALUE args[6] = { Qnil, Qnil, Qnil, Qnil, Qnil, Qnil };
+  VALUE args[7] = { Qnil, Qnil, Qnil, Qnil, Qnil, Qnil, Qnil };
   char* effective_url = NULL;
+  char* primary_ip = NULL;
   long code = 0;
   long count = 0;
 
@@ -512,7 +513,10 @@ static VALUE create_response(VALUE self, CURL* curl, VALUE header_buffer, VALUE 
   args[4] = body_buffer;
   args[5] = rb_iv_get(self, "@default_response_charset");
 
-  return rb_class_new_instance(6, args, rb_const_get(mPatron, rb_intern("Response")));
+  curl_easy_getinfo(curl, CURLINFO_PRIMARY_IP, &primary_ip);
+  args[6] = rb_str_new2(primary_ip);
+
+  return rb_class_new_instance(7, args, rb_const_get(mPatron, rb_intern("Response")));
 }
 
 /* Raise an exception based on the Curl error code. */
